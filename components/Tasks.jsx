@@ -3,38 +3,57 @@ import { useState } from 'react';
 import styles from "../app/page.module.css";
 
 
-const Tasks = () => {
-  const [tasks, setTasks] = useState([]);
+const Tasks = ({ tasks, setTasks }) => {
 
-  const toggleTask = (id) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+  const handleComplete = (taskId) => {
+    const updatedTasks = tasks.map(task => {
+      if (task.id === taskId) {
+        return { ...task, completed: !task.completed };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+  const handleDelete = (taskId) => {
+    const filteredTasks = tasks.filter(task => task.id !== taskId);
+    setTasks(filteredTasks);
   };
 
 
   return (
-    <div>
-      <ul className={styles.taskList}>
-        {tasks.map((task) => (
-          <li key={task.id} className={styles.taskItem}>
-            <span
-              className={task.completed ? styles.completed : ''}
-              onClick={() => toggleTask(task.id)}
-            >
-              {task.text}
-            </span>
-            <button onClick={() => deleteTask(task.id)} className={styles.deleteBtn}>
-              ✖
-            </button>
-          </li>
-        ))}
-      </ul>
-      <p className={styles.count}>Total Tasks: {tasks.length}</p>
+    <div className={styles.tasksContainer}>
+      {tasks.length === 0 ? (
+        <p className={styles.emptyMessage}>No tasks yet. Add one above!</p>
+      ) : (
+        <div>
+          <ul className={styles.tasksList}>
+            {tasks.map((task) => (
+              <li key={task.id} className={`${styles.taskItem} ${task.completed ? styles.completedTask : ''}`}>
+                <div className={styles.taskContent}>
+                  <span
+                    className={styles.taskText}
+                    onClick={() => handleComplete(task.id)}
+                  >
+                    {task.text}
+                  </span>
+                  <button
+                    className={styles.removeButton}
+                    onClick={() => handleDelete(task.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className={styles.taskStats}>
+            <span>Total: {tasks.length}</span>
+            <span>Completed: {tasks.filter(t => t.completed).length}</span>
+            <span>Remaining: {tasks.filter(t => !t.completed).length}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

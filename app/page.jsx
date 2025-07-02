@@ -7,8 +7,9 @@ import { useState } from 'react';
 
 const HomePage = () => {
   const [newTask, setNewTask] = useState('');
+  const [tasks, setTasks] = useState([]);
 
-  const addTask = () => {
+  const handleTask = () => {
     if (newTask.trim() === '') return;
     setTasks([...tasks, { id: Date.now(), text: newTask, completed: false }]);
     setNewTask('');
@@ -25,17 +26,16 @@ const HomePage = () => {
           <input
             type="text"
             className={styles.input}
+            value={newTask}
             placeholder="Add a new task..."
+            onChange={(e) => setNewTask(e.target.value)}
           />
         </div>
-        <button className={styles.addButton}>
+        <button className={styles.addButton} onClick={handleTask}>
           Add Task
         </button>
       </div>
-      <div>
-        <Tasks />
-      </div>
-
+      <Tasks Tasks tasks={tasks} setTasks={setTasks} />
     </>
   );
 };
